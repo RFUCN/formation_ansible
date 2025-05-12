@@ -1,0 +1,29 @@
+---
+- name: TP 02
+  hosts: all
+  remote_user: root
+
+  tasks:
+    - name: Install packages 
+      ansible.builtin.apt:
+        name: "{{ item }}" 
+        update_cache: true
+      when: "'{{ item }}' in group_names"
+      loop:
+        - apache2
+        - git
+        - cowsay
+        - nginx
+        - mysql-server
+    - name: Uninstall packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: absent
+      when: "'{{ item }}' not in group_names"
+      loop:
+        - apache2
+        - git
+        - cowsay
+        - nginx
+        - mysql-server
+
