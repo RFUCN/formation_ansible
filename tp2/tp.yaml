@@ -4,17 +4,6 @@
   remote_user: root
 
   tasks:
-    - name: Install packages 
-      ansible.builtin.apt:
-        name: "{{ item }}" 
-        update_cache: true
-      when: "'{{ item }}' in group_names"
-      loop:
-        - apache2
-        - git
-        - cowsay
-        - nginx
-        - mysql-server
     - name: Uninstall packages
       ansible.builtin.apt:
         name: "{{ item }}"
@@ -26,4 +15,22 @@
         - cowsay
         - nginx
         - mysql-server
+
+    - name: Install packages
+      ansible.builtin.apt:
+        name: "{{ item }}" 
+        update_cache: true
+      loop:
+        - apache2
+        - git
+        - cowsay
+        - nginx
+        - mysql-server
+      register: echo
+      when: "'{{ item }}' in group_names"
+
+    - name: Show the previous registred variable
+      ansible.builtin.debug:
+        msg: "Hello world"
+      loop: "{{ echo.results }}"
 
