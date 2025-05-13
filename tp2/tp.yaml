@@ -29,8 +29,34 @@
       register: echo
       when: "'{{ item }}' in group_names"
 
+    - name: Install packages specials Debian
+      ansible.builtin.apt:
+        name: "sl" 
+        update_cache: true
+      when: ansible_facts.os_family == 'Debian'
+
+    - name: Install packages specials Ubuntu
+      ansible.builtin.apt:
+        name: "ufw" 
+        update_cache: true
+      when: ansible_facts.os_family == 'Ubuntu'
+
     - name: Show the previous registred variable
       ansible.builtin.debug:
-        msg: "Hello world"
-      loop: "{{ echo.results }}"
+        var: ansible_facts.packages
+      when: "'nginx' in group_names or 'apache2' in group_names"
+
+    - name: Get facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Print the package facts
+      ansible.builtin.debug:
+        var: ansible_facts.packages['apache2']
+      when: "'nginx' in group_names or 'apache2' in group_names"
+
+    - name: Debug
+      ansible.builtin.debug:
+        var: ansible_facts.os_family
+      when: "'nginx' in group_names or 'apache2' in group_names"
 
