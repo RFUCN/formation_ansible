@@ -1,0 +1,59 @@
+---
+- name: TP 04
+  hosts: all
+  remote_user: root
+
+  vars:
+    apache_listen_port: 88
+
+  tasks:  
+    - name: Uninstall packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: absent
+      when: "'{{ item }}' not in group_names"
+      loop:
+        - apache2
+        - git
+        - cowsay
+        - nginx
+        - mysql-server
+      tags: uninstall
+
+    - name: Install packages mysql-server
+      include_role:
+        name: geerlingguy.mysql
+        apply:
+          tags:
+            - mysql
+      when: "inventory_hostname == 'node2'"
+      tags:
+        - mysql
+
+    - name: Install apache from role
+      include_role:
+        name: geerlingguy.apache
+        apply:
+          tags:
+            - apache
+      when: "inventory_hostname == 'node3'"
+      tags:
+        - apache
+      
+    - name: Create welcome message using jinja2
+      ansible.builtin.template:
+        src: templates/index.j2
+        dest: /var/www/html/index.html
+      when: "inventory_hostname == 'node3'"
+      tags:
+        - apache
+
+    - meta: flush_handlers
+
+    - name: Include Task1
+      include_tasks: "tasks/task1.yaml"
+      when: "inventory_hostname == 'node3'"
+      tags:
+        - apache
+
+
