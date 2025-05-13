@@ -1,0 +1,17 @@
+---
+- name: TP 03
+  hosts: all
+  remote_user: root
+  roles:
+    - role: geerlingguy.docker
+      when: "'docker' in group_names"
+
+  tasks:
+    - name: Get facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Show the previous registred variable
+      ansible.builtin.debug:
+        msg: "Hello world"
+      when: "'docker' in group_names"
