@@ -41,22 +41,16 @@
         update_cache: true
       when: ansible_facts.os_family == 'Ubuntu'
 
-    - name: Show the previous registred variable
-      ansible.builtin.debug:
-        var: ansible_facts.packages
-      when: "'nginx' in group_names or 'apache2' in group_names"
-
     - name: Get facts
       ansible.builtin.package_facts:
         manager: auto
 
-    - name: Print the package facts
+    - name: Show the previous registred variable
       ansible.builtin.debug:
-        var: ansible_facts.packages['apache2']
+        var: ansible_facts.packages
       when: "'nginx' in group_names or 'apache2' in group_names"
 
     - name: Debug
       ansible.builtin.debug:
         var: ansible_facts.os_family
       when: "'nginx' in group_names or 'apache2' in group_names"
-
